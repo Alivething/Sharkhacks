@@ -86,20 +86,21 @@ function create ()
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
 
-    //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
+    //  Some garbage to collect
     fish = this.physics.add.group();
-
-
     garbage = this.physics.add.group();
     var g0=garbage.create(130,420,'g1');
+
+    bombs = this.physics.add.group();
 
     //  The score
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-    //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+    //  Checks to see if the player overlaps with any of the garbage, if he does call the collectStar function
     this.physics.add.collider(player, garbage, collectStar, null, this);
     this.physics.add.collider(platforms, fish, removeFish, null, this);
     this.physics.add.collider(platforms, garbage, removeGar, null, this);
+    this.physics.add.collider(platforms, bombs, removeBomb, null, this);
     this.physics.add.collider(player, bombs, hitBomb, null, this);
 
 }
@@ -141,6 +142,12 @@ function update ()
     }
 }
 
+function removeBomb (platforms, bombs)
+    {
+        bombs.disableBody(true, true);
+        checkBomb();
+    }
+
 function removeFish (platforms, fish)
     {
         fish.disableBody(true, true);
@@ -160,6 +167,7 @@ function collectStar (player, garbage)
         score += 10;
         scoreText.setText('Score: ' + score);
         checkGar();
+        checkBomb();
         checkFish();
     }
 
@@ -167,23 +175,35 @@ function checkFish()
 {
     if(fish.countActive(true)==0)
     {
-        var fish1 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(0, 600),'fish_1');
-        var fish2 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(0, 600),'fish_2');
-        var fish3 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(0, 600),'fish_2');
+        var fish1 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'fish_1');
+        var fish2 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'fish_2');
+        var fish3 = fish.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'fish_2');
     }
-    fish.setVelocityX(-100)
+    fish.setVelocityX(-200)
+}
+
+function checkBomb()
+{
+    if(bombs.countActive(true)==0)
+    {
+        var b1 = bombs.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'bomb');
+        var b2 = bombs.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'bomb');
+        var b3 = bombs.create(Phaser.Math.Between(800, 1000), Phaser.Math.Between(10, 500),'bomb');
+        bombs.setVelocityX(-1*(Phaser.Math.Between(10, 200)))
+    }
+    
 }
 
 function checkGar()
 {
     if(garbage.countActive(true)==0)
     {
-        var g1 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(0, 400),'g1');
-        var g2 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(0, 400),'g2');
-        var g3 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(0, 400),'g3');
-        var g4 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(0, 400),'g4');
+        var g1 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(10, 500),'g1');
+        var g2 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(10, 500),'g2');
+        var g3 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(10, 500),'g3');
+        var g4 = garbage.create(Phaser.Math.Between(800, 900), Phaser.Math.Between(10, 500),'g4');
     }
-    garbage.setVelocityX(-100)
+    garbage.setVelocityX(-150)
 }
 
 
@@ -193,7 +213,7 @@ function hitBomb (player, bomb)
 
     player.setTint(0xff0000);
 
-    player.anims.play('turn');
+    player.anims.play('flip');
 
     gameOver = true;
 }
