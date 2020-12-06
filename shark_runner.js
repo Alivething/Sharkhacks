@@ -1,6 +1,6 @@
 let game;
 
-let game_options {
+let game_options = {
     platform_speed: [300, 300],
     platform_spawn_range: [80, 300],
     platform_width: [-5, 5],
@@ -102,7 +102,7 @@ class playGame extends Phaser.Scene{
         this.player.setDepth(2);
 
 
-        this.platformCollider = this.physics.add.collider(this.player, this.platformGroup, function(){
+        this.platformCollider = this.physics.add.collider(this.player, this.platform_group, function(){
 
             // play "run" animation if the player is on a platform
             if(!this.player.anims.isPlaying){
@@ -110,7 +110,7 @@ class playGame extends Phaser.Scene{
             }
         }, null, this);
 
-        this.physics.add.collider(player, fish, collectStar, null, this);
+        this.physics.add.collider(this.player, this.fish, this.collectStar, null, this);
 
         this.physics.add.overlap(this.player, this.trash_group, function(player, trash){
 
@@ -135,6 +135,7 @@ class playGame extends Phaser.Scene{
 
     addPlatform(platformWidth, posX, posY){
         this.added_platforms ++;
+        console.log(game_options.platform_spawn_range)
         let platform;
         if(this.platform_pool.getLength()){
             platform = this.platform_pool.getFirst();
@@ -151,7 +152,7 @@ class playGame extends Phaser.Scene{
             platform = this.add.tileSprite(posX, posY, platformWidth, 32, "ground");
             this.physics.add.existing(platform);
             platform.body.setImmovable(true);
-            platform.body.setVelocityX(Phaser.Math.Between(game_options.platform_speed_range[0], game_options.platform_speed_range[1]) * -1);
+            platform.body.setVelocityX(Phaser.Math.Between(game_options.platform_spawn_range[0], game_options.platform_spawn_range[1]) * -1);
             platform.setDepth(2);
             this.platform_group.add(platform);
         }
@@ -190,7 +191,7 @@ class playGame extends Phaser.Scene{
         // recycling platforms
         let minDistance = game.config.width;
         let rightmostPlatformHeight = 0;
-        this.platformGroup.getChildren().forEach(function(platform){
+        this.platform_group.getChildren().forEach(function(platform){
             let platformDistance = game.config.width - platform.x - platform.displayWidth / 2;
             if(platformDistance < minDistance){
                 minDistance = platformDistance;
