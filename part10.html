@@ -162,7 +162,7 @@
         }
 
         function checkTrash() {
-            if (trash.countActive(true) == 0) {
+            if (trash.countActive(true) <= 3) {
 
                 var trash1 = trash.create(690, Phaser.Math.Between(43,400),'trash');
                 var trash2 = trash.create(740, Phaser.Math.Between(20, 430), 'trash2');
